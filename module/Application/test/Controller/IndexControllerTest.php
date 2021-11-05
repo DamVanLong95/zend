@@ -50,4 +50,11 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/invalid/route', 'GET');
         $this->assertResponseStatusCode(404);
     }
+
+    public function testRegisterActionForm()
+    {
+    }
+
+    
+
 }

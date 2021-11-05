@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Global Configuration Override
  *
@@ -12,5 +13,13 @@
  */
 
 return [
-    // ...
+    'db' => [
+        'driver'         => 'Pdo',
+        'dsn'            => 'mysql:dbname=zend;host=localhost;port=3309',
+        'username' => 'root',
+        'password' => '12345678',
+        'driver_options' => array(
+            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+        ),
+    ],
 ];

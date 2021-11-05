@@ -30,7 +30,7 @@ return [
                     'route'    => '/application[/:action]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
-                        'action'     => 'index',
+                        'action'     => 'register',
                     ],
                 ],
             ],
@@ -38,7 +38,11 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            Controller\IndexController::class => InvokableFactory::class,
+            Controller\TutorialController::class => function($container) { 
+                return new Controller\IndexController( 
+                   $container->get(Model\UserTable::class) 
+                ); 
+             }, 
         ],
     ],
     'view_manager' => [
