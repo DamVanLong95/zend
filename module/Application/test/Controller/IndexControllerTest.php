@@ -53,6 +53,9 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
 
     public function testRegisterActionForm()
     {
+        $this->dispatch('/application/register', 'POST');
+        $this->assertController('index');
+        $this->assertAction('register');
     }
 
     
