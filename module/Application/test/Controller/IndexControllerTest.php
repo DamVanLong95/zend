@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
@@ -8,8 +9,12 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\IndexController;
+use Application\Model\User;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Application\Model\UserTable;
+use Zend\ServiceManager\ServiceManager;
+use Prophecy\Argument;
 
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
@@ -27,10 +32,34 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         ));
 
         parent::setUp();
+        $this->configureServiceManager($this->getApplicationServiceLocator());
+    }
+
+    protected function configureServiceManager(ServiceManager $services)
+    {
+        $services->setAllowOverride(true);
+
+        $services->setService('config', $this->updateConfig($services->get('config')));
+        $services->setService(UserTable::class, $this->mockUserTable()->reveal());
+
+        $services->setAllowOverride(false);
+    }
+
+    protected function updateConfig($config)
+    {
+        $config['db'] = [];
+        return $config;
+    }
+
+    protected function mockUserTable()
+    {
+        $this->userTable = $this->prophesize(UserTable::class);
+        return $this->userTable;
     }
 
     public function testIndexActionCanBeAccessed()
     {
+        $this->userTable->fetchAll()->willReturn([]);
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertModuleName('application');
@@ -51,13 +80,21 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
-    public function testRegisterActionForm()
+    public function testRegisterActionRedirectsAfterValidPost()
     {
-        $this->dispatch('/application/register', 'POST');
-        $this->assertController('index');
-        $this->assertAction('register');
+        $this->userTable
+            ->saveUser(Argument::type(User::class))
+            ->shouldBeCalled();
+
+        $postData = [
+            'username'  => 'Led Zeppelin III',
+            'fullname' => 'Led Zeppelin',
+            'email'     => 1223,
+            'password' => '123',
+        ];
+        $this->dispatch('/application/register', 'POST', $postData);
+        $this->assertResponseStatusCode(302);
+        $this->assertRedirect();
+        $this->assertRedirectTo('/application/index');
     }
-
-    
-
 }

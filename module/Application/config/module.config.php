@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
@@ -9,7 +10,6 @@ namespace Application;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
-use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
     'router' => [
@@ -38,11 +38,11 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            Controller\TutorialController::class => function($container) { 
-                return new Controller\IndexController( 
-                   $container->get(Model\UserTable::class) 
-                ); 
-             }, 
+            Controller\IndexController::class => function ($container) {
+                return new Controller\IndexController(
+                    $container->get(Model\UserTable::class)
+                );
+            },
         ],
     ],
     'view_manager' => [

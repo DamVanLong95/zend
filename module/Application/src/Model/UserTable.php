@@ -12,7 +12,6 @@ class UserTable
     public function __construct(TableGatewayInterface $tableGateway)
     {
         $this->tableGateway = $tableGateway;
-
     }
 
 
@@ -20,23 +19,22 @@ class UserTable
     {
         return $this->tableGateway->select();
     }
-    
-    public function saveUser(User $user){
-    	$data = [
-    		'username' => $user->getUserName(),
-    		'email' => $user->getEmail(),
-    		'fullname' => $user->getFullName(),
-    		'password' => $user->getPassword(),
-    	];
 
-        if($user->getId()) {
-            $this->tableGateway->update($data,[
+    public function saveUser(User $user)
+    {
+        $data = [
+            'username' => $user->getUserName(),
+            'email' => $user->getEmail(),
+            'fullname' => $user->getFullName(),
+            'password' => $user->getPassword(),
+        ];
+
+        if ($user->getId()) {
+            $this->tableGateway->update($data, [
                 'id' => $user->getId()
             ]);
+        } else {
+            $this->tableGateway->insert($data);
         }
-        else{
-            $this->tableGateway->insert($data);    
-        }
-    	
     }
 }
