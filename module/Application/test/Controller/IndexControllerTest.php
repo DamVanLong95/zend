@@ -35,6 +35,9 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->configureServiceManager($this->getApplicationServiceLocator());
     }
 
+    /**
+     * Configuring the service manager for the tests
+     */
     protected function configureServiceManager(ServiceManager $services)
     {
         $services->setAllowOverride(true);
@@ -80,8 +83,12 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * Test action with post
+     */
     public function testRegisterActionRedirectsAfterValidPost()
     {
+        // check param instane
         $this->userTable
             ->saveUser(Argument::type(User::class))
             ->shouldBeCalled();
@@ -89,12 +96,11 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $postData = [
             'username'  => 'Led Zeppelin III',
             'fullname' => 'Led Zeppelin',
-            'email'     => 1223,
+            'email'     => 'longdv@gmail.com',
             'password' => '123',
         ];
         $this->dispatch('/application/register', 'POST', $postData);
         $this->assertResponseStatusCode(302);
-        $this->assertRedirect();
         $this->assertRedirectTo('/application/index');
     }
 }

@@ -30,11 +30,11 @@ class UserTable
         ];
 
         if ($user->getId()) {
-            $this->tableGateway->update($data, [
+            return $this->tableGateway->update($data, [
                 'id' => $user->getId()
             ]);
         } else {
-            $this->tableGateway->insert($data);
+           return $this->tableGateway->insert($data);
         }
     }
 }

@@ -5,21 +5,23 @@ use Zend\Crypt\Password\Bcrypt;
 
 class User
 {
-   protected $id;
-   protected $username;
-   protected $fullname;
-   protected $email;
-   protected $password;
+   public $id;
+   public $username;
+   public $fullname;
+   public $email;
+   public $password;
 
    public function exchangeArray(array $data)
    {
       $bcrypt = new Bcrypt();
-      $password = $bcrypt->create($data['password']);
-      $this->email = $data['email'];
-      $this->username = $data['username'];
-      $this->fullname = $data['fullname'];
+
+      $password = isset($data['password']) ? $bcrypt->create($data['password']) : null;
+      $this->email = $data['email'] ?? null;
+      $this->username = $data['username'] ?? null;
+      $this->fullname = $data['fullname'] ?? null;
       $this->password = $password;
    }
+   
    public function getArrayCopy()
    {
       return [

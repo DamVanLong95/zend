@@ -1,6 +1,7 @@
 <?php
 $title = 'haha';
 $this->headTitle($title);
+$this->headLink()->appendStylesheet('/css/register.css');
 $form = $this->form;
 $form->prepare();
 ?>
@@ -18,6 +19,25 @@ $form->prepare();
     </div>
     <div class="form-group">
         <?= $this->formRow($form->get('password')); ?>
+    </div>
+    <div class="form-group">
+        <?= $this->formRow($form->get('gender'));?>
+    </div>
+
+    <div class="form-group">
+        <?= $this->formRow($form->get('birthday'));?>
+    </div>
+    <div class="form-group">
+        <?= $this->formRow($form->get('phone'));?>
+    </div>
+    <div class="form-group">
+        <?= $this->formRow($form->get('avatar'));?>
+    </div>
+    <div class="form-group">
+        <?= $this->formRow($form->get('country'));?>
+    </div>
+    <div class="form-group">
+        <?= $this->formRow($form->get('description'));?>
     </div>
 
     <?= $this->formElement($form->get('submit'),'register'); ?>
