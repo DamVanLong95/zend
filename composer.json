@@ -23,7 +23,8 @@
         "zendframework/zend-mvc-console": "^1.2.0",
         "zendframework/zend-mvc-plugins": "^1.0.1",
         "zendframework/zend-servicemanager-di": "^1.2.1",
-        "zendframework/zend-crypt": "^3.3"
+        "zendframework/zend-crypt": "^3.3",
+        "zendframework/zend-validator": "^2.13"
     },
     "autoload": {
         "psr-4": {

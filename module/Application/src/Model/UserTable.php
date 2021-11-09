@@ -26,6 +26,12 @@ class UserTable
             'username' => $user->getUserName(),
             'email' => $user->getEmail(),
             'fullname' => $user->getFullName(),
+            'birthday' => $user->getBirthDay(),
+            'phone' => $user->getPhone(),
+            'description' => $user->getDescription(),
+            'gender' => $user->getGender(),
+            'avatar' => $user->getAvatar(),
+            'skill' => $user->getSkill(),
             'password' => $user->getPassword(),
         ];
 

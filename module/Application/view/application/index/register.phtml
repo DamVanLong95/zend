@@ -2,26 +2,53 @@
 $title = 'haha';
 $this->headTitle($title);
 $form = $this->form;
+$gender = $form->get('gender');
+$birthday = $form->get('birthday');
+$avatar = $form->get('avatar');
+$phone = $form->get('phone');
+$skill = $form->get('skill');
+$description = $form->get('description');
 $form->prepare();
 ?>
-<div class="col-md-6 mb-4">
 <?= $this->form()->openTag($form); ?>
-<div class="form-group">
-        <?= $this->formRow($form->get('fullname')); ?>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <?= $this->formRow($form->get('fullname')); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formRow($form->get('email')); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formRow($form->get('username')); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formRow($form->get('password')); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formRow($gender); ?><br>
+        </div>
     </div>
-    <div class="form-group">
-        <?= $this->formLabel($form->get('email')); ?>
-        <?= $this->formElement($form->get('email')); ?>
+    <div class="col-md-6 ">
+        <div class="form-group">
+            <?= $this->formLabel($birthday); ?>
+            <?= $this->formElement($birthday); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formLabel($avatar); ?>
+            <?= $this->formElement($avatar); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formRow($phone); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formLabel($skill); ?>
+            <?= $this->formElement($skill); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formRow($description); ?>
+        </div>
     </div>
-    <div class="form-group">
-        <?= $this->formRow($form->get('username')); ?>
-    </div>
-    <div class="form-group">
-        <?= $this->formRow($form->get('password')); ?>
-    </div>
-
-    <?= $this->formElement($form->get('submit'),'register'); ?>
-
-    <?= $this->form()->closeTag(); ?>
-
 </div>
+<?= $this->formElement($form->get('submit'), 'register'); ?>
+<?= $this->form()->closeTag(); ?>

@@ -16,11 +16,11 @@ use Application\Model\User;
 class IndexController extends AbstractActionController
 {
     protected $table;
-    
-	public function __construct($table)
-	{
-		$this->table = $table;
-	}   
+
+    public function __construct($table)
+    {
+        $this->table = $table;
+    }
 
     public function indexAction()
     {
@@ -31,17 +31,13 @@ class IndexController extends AbstractActionController
     {
         $form = new RegisterForm();
 
-        $form->setAction($this->url()->fromRoute(
-            'application',
-            ['action' => 'register']
-        ));
-
         $request = $this->getRequest();
         $params = $this->params();
 
         //Xử lý khi POST
         if ($request->isPost()) {
-
+            $user = new User();
+            $form->setInputFilter($user->getInputFilter());
             $form->setData($params->fromPost());
 
             //Kiểm tra hợp lệ
@@ -58,7 +54,12 @@ class IndexController extends AbstractActionController
                 return $this->redirect()->toRoute('application', [
                     'controller' => 'index',
                     'action' => 'index'
-                  ]);
+                ]);
+            } else {
+                $messages = $form->getMessages();
+                foreach ($messages as $error) {
+                    // echo $error;
+                }
             }
         }
 
