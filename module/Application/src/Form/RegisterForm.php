@@ -11,9 +11,9 @@ class RegisterForm extends Form
     {
         //Định nghĩa tên cho form
         parent::__construct('register');
-        // Set POST method for this form
-        $this->setAttribute('method', 'post');
         $this->setAttribute('class', 'p-4 bg-light');
+        // $this->setAttribute('method', 'POST');
+        $this->setAttribute('enctype', 'multipart/form-data');
 
         $this->addElements();
     }
@@ -32,7 +32,8 @@ class RegisterForm extends Form
             'name' => 'fullname',
             'attributes' => [
                 'id' => 'fullname',
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'placeholder' => 'Nguyễn Văn A'
             ],
             'options' => [
                 'label' => 'Full name',
@@ -45,7 +46,8 @@ class RegisterForm extends Form
             'name' => 'email',
             'attributes' => [
                 'id' => 'email',
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'placeholder' => 'exam@gmail.com'
             ],
             'options' => [
                 'label' => 'Email address',
@@ -58,7 +60,8 @@ class RegisterForm extends Form
             'name' => 'username',
             'attributes' => [
                 'id' => 'username',
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'placeholder' => 'username'
 
             ],
             'options' => [
@@ -72,80 +75,111 @@ class RegisterForm extends Form
             'name' => 'password',
             'attributes' => [
                 'id' => 'password',
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'placeholder' => 'password',
+                'min'  => '1945-01-01',
+                'max'  => '2020-01-01',
             ],
             'options' => [
                 'label' => 'Password',
             ],
         ]);
 
-        // Add "sex" field
+        // Add "birthday" field
         $this->add([
-            'type' => 'radio',
+            'type'  => 'date',
+            'name' => 'birthday',
+            'attributes' => [
+                'id' => 'birthday',
+                'class' => 'form-control'
+            ],
+            'options' => [
+                'label' => 'Birthday: ',
+            ],
+        ]);
+
+        // Add "phone" field
+        $this->add([
+            'type'  => 'text',
+            'name' => 'phone',
+            'attributes' => [
+                'id' => 'phone',
+                'class' => 'form-control',
+                'placeholder' => 'Phone'
+            ],
+            'options' => [
+                'label' => 'Phone number',
+            ],
+        ]);
+
+        // Add "avatar" field
+        $this->add([
+            'type'  => 'file',
+            'name' => 'avatar',
+            'attributes' => [
+                'id' => 'avatar',
+                'class' => 'form-control'
+            ],
+            'options' => [
+                'label' => 'Avatar',
+            ],
+        ]);
+
+        // Add "gender" field
+        $this->add([
+            'type'  => 'radio',
             'name' => 'gender',
+            'attributes' => [
+                'id' => 'gender',
+                'style' => 'margin-right:12px'
+            ],
             'options' => array(
                 'label' => 'What is your gender ?',
+                'class' => 'control-label',
                 'value_options' => array(
                     '0' => 'Female',
                     '1' => 'Male',
                 ),
-                'label_attributes' => array(
-                    'class' => 'gender-label',
-                ),
             ),
         ]);
-
-        // Add "birthday" field
+        // Add "description" field
         $this->add([
-            'type' => 'date',
-            'name' => 'birthday',
+            'type' => \Zend\Form\Element\Textarea::class,
+            'name' => 'description',
+            'attributes' => [
+                'id' => 'description',
+                'class' => 'form-control',
+                'row' => 8,
+                'style' => 'resize:none',
+                'placeholder' => 'writting here'
+            ],
+            'options' => [
+                'label' => 'Description',
+                'label_attributes' => [
+                    'class' => 'control-label'
+                ]
+            ],
+        ]);
+
+        // Add "skill" field
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'skill',
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'select'
+            ],
             'options' => array(
-                'label' => 'Birthday '
-            ),
-            'attributes' => array(
-                'min' => '2012-01-01',
-                'max' => '2020-01-01',
-                'step' => '1', // days; default step interval is 1 day
+                'label' => 'Skill ',
+                'empty_option' => 'Please choose your skill',
+                'value_options' => array(
+                    '0' => 'PHP',
+                    '1' => 'JAVA',
+                    '2' => 'JAVASCRIPT',
+                    '3' => 'C++',
+                ),
             )
         ]);
-
-        $this->add([
-            'name' => 'phone',
-            'type' => 'number',
-            'options' => array(
-                'label' => 'Phone '
-            ),
-            'attributes' => [
-                'id' => 'phone',
-                'class' => 'form-control'
-            ],
-        ]);
-       
-        $this->add([
-            'name' => 'country',
-            'type' => 'text',
-            'options' => array(
-                'label' => 'Country '
-            ),
-            'attributes' => [
-                'id' => 'phone',
-                'class' => 'form-control'
-            ],
-        ]);
-        $this->add([
-            'name' => 'avatar',
-            'type' => 'file',
-            'options' => array(
-                'label' => 'Avatar'
-            ),
-            'attributes' => [
-                'id' => 'city',
-                'class' => 'form-control'
-            ],
-        ]);
-        $element = new Element\Textarea('description');
-        $element->setLabel('Enter a description');
-        $this->add($element);
 
         // Add the submit button
         $this->add([

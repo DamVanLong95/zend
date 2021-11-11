@@ -61,4 +61,10 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'service_manager' => [
+        'factories' => [
+            // Register the ImageManager service
+            Service\ImageManager::class => InvokableFactory::class,            
+        ],
+    ],    
 ];
