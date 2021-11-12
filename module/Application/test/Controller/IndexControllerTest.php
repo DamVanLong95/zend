@@ -71,12 +71,6 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('home');
     }
 
-    public function testIndexActionViewModelTemplateRenderedWithinLayout()
-    {
-        $this->dispatch('/', 'GET');
-        $this->assertQuery('.container .jumbotron');
-    }
-
     public function testInvalidRouteDoesNotCrash()
     {
         $this->dispatch('/invalid/route', 'GET');
@@ -86,7 +80,7 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
     /**
      * Test action with post
      */
-    public function testRegisterActionRedirectsAfterValidPost()
+    public function testAddActionRedirectsAfterValidPost()
     {
         // check param instane
         $this->userTable
@@ -98,9 +92,16 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
             'fullname' => 'Led Zeppelin',
             'email'     => 'longdv@gmail.com',
             'password' => '123',
+            'phone' => '21421423',
+            'gender' => '1',
+            'description' => 'sdfds',
+            'avatar' => 'sdfds',
+            'birthday' => '2021/1/1',
+            'skill'=> 1
         ];
-        $this->dispatch('/application/register', 'POST', $postData);
+        $this->dispatch('/application/add', 'POST', $postData);
         $this->assertResponseStatusCode(302);
         $this->assertRedirectTo('/application/index');
+
     }
 }

@@ -37,6 +37,7 @@ class UserTable
     public function saveUser(User $user)
     {
         $data = [
+            'id' => $user->getId(),
             'username' => $user->getUserName(),
             'email' => $user->getEmail(),
             'fullname' => $user->getFullName(),
@@ -47,14 +48,19 @@ class UserTable
             'avatar' => $user->getAvatar(),
             'skill' => $user->getSkill(),
             'password' => $user->getPassword(),
+            'created_at' => $user->getCreatedAt(),
+            'updated_at' => $user->getUpdatedAt(),
         ];
 
         if ($user->getId()) {
+            $dateTime = new \DateTime();
+            $data['updated_at'] = $dateTime->format('Y-m-d H:i:s');
+
             return $this->tableGateway->update($data, [
                 'id' => $user->getId()
             ]);
         } else {
-           return $this->tableGateway->insert($data);
+            return $this->tableGateway->insert($data);
         }
     }
 

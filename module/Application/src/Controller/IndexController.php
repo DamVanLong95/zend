@@ -12,7 +12,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Application\Form\RegisterForm;
 use Application\Model\User;
-use Application\Service\ImageManager;
+use Zend\Filter\File\Rename;
 
 class IndexController extends AbstractActionController
 {
@@ -25,15 +25,16 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        return new ViewModel();
+        $users  = $this->table->fetchAll();
+       
+        return ['users' => $users];
     }
 
-    public function registerAction()
+    public function addAction()
     {
         $form = new RegisterForm();
 
         $request = $this->getRequest();
-        $params = $this->params();
         if (!$request->isPost()) {
             return ['form' => $form];
         }
@@ -41,20 +42,35 @@ class IndexController extends AbstractActionController
         //Xử lý khi POST
         $user = new User();
         $form->setInputFilter($user->getInputFilter());
-        $form->setData(array_merge(
-            $this->params()->fromPost(),
-            $this->params()->fromFiles()
-        ));
+
+        $data =  $request->getPost()->toArray();
+        $file =  $request->getFiles()->toArray();
+        $post = array_merge_recursive($data, $file);
+        $form->setData($post);
 
         //Kiểm tra hợp lệ
         if (!$form->isValid()) {
             return ['form' => $form];
         }
-        
+
         $data = $form->getData();
 
-        $user = new User;
+        $newFileName = date('Y-m-d-h-i-s') . '-' . $file['avatar']['name'];
 
+        // Rename file upload.
+        $filter = new Rename(array(
+            "target"    => IMAGE_PATH . $newFileName,
+            "overwrite " => true,
+            "randomize" => true,
+        ));
+
+        $filter->filter($file['avatar']);
+
+        $data['avatar'] = $newFileName;
+        $dateTime = new \DateTime();
+        $data['created_at'] = $dateTime->format('Y-m-d H:i:s');
+
+        $user = new User;
         $user->exchangeArray($data);
 
         $this->table->saveUser($user);
@@ -64,6 +80,67 @@ class IndexController extends AbstractActionController
             'controller' => 'index',
             'action' => 'index'
         ]);
+    }
 
+    public function editAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+
+        if (0 === $id) {
+            return $this->redirect()->toRoute('application', ['action' => 'add']);
+        }
+
+        $user = $this->table->getUserById($id);
+
+        $form = new RegisterForm();
+        $form->bind($user);
+
+        $form->get('submit')->setAttribute('value', 'Edit');
+
+        $request = $this->getRequest();
+        $viewData = ['id' => $id, 'form' => $form];
+
+        if (!$request->isPost()) {
+            return $viewData;
+        }
+
+        $form->setInputFilter($user->getInputFilter());
+        $form->setData($request->getPost());
+
+        if (!$form->isValid()) {
+            return $viewData;
+        }
+
+        $this->table->saveUser($user);
+
+        // Redirect to album list
+        return $this->redirect()->toRoute('application', ['action' => 'index']);
+    }
+
+    public function deleteAction()
+    {
+
+        $id = (int) $this->params()->fromRoute('id', 0);
+        if (!$id) {
+            return $this->redirect()->toRoute('application');
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $del = $request->getPost('del', 'No');
+
+            if ($del == 'Yes') {
+                $id = (int) $request->getPost('id');
+                $this->table->deleteUser($id);
+            }
+
+            // Redirect to list of albums
+            return $this->redirect()->toRoute('application');
+        }
+
+        return [
+            'id'    => $id,
+            'user' => $this->table->getUserById($id),
+        ];
     }
 }
