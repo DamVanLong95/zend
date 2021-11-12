@@ -12,6 +12,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Application\Form\RegisterForm;
 use Application\Model\User;
+use Zend\Filter\File\Rename;
 
 class IndexController extends AbstractActionController
 {
@@ -34,39 +35,47 @@ class IndexController extends AbstractActionController
         $request = $this->getRequest();
         $params = $this->params();
 
+        if (!$request->isPost()) {
+            return ['form' => $form];
+        }
         //Xử lý khi POST
-        if ($request->isPost()) {
-            $user = new User();
-            $form->setInputFilter($user->getInputFilter());
-            $form->setData($params->fromPost());
+        $user = new User();
+        $form->setInputFilter($user->getInputFilter());
 
-            //Kiểm tra hợp lệ
-            if ($form->isValid()) {
-                $data = $form->getData();
+        $data =  $request->getPost()->toArray();
+        $file =  $request->getFiles()->toArray();
+        $post = array_merge_recursive($data, $file);
+        $form->setData($post);
 
-                $user = new User;
-
-                $user->exchangeArray($data);
-
-                $this->table->saveUser($user);
-
-                //Thông báo - chuyển hướng sang trang khác
-                return $this->redirect()->toRoute('application', [
-                    'controller' => 'index',
-                    'action' => 'index'
-                ]);
-            } else {
-                $messages = $form->getMessages();
-                foreach ($messages as $error) {
-                    // echo $error;
-                }
-            }
+        //Kiểm tra hợp lệ
+        if (!$form->isValid()) {
+            return ['form' => $form];
         }
 
-        $view = new ViewModel([
-            'form' => $form
-        ]);
+        $data = $form->getData();
 
-        return $view;
+        $newFileName = date('Y-m-d-h-i-s') . '-' . $file['avatar']['name'];
+
+        // Rename file upload.
+        $filter = new Rename(array(
+            "target"    => IMAGE_PATH . $newFileName,
+            "overwrite " => true,
+            "randomize" => true,
+        ));
+
+        $filter->filter($file['avatar']);
+
+        $data['avatar'] = $newFileName;
+
+        $user = new User;
+        $user->exchangeArray($data);
+
+        $this->table->saveUser($user);
+
+        //Thông báo - chuyển hướng sang trang khác
+        return $this->redirect()->toRoute('application', [
+            'controller' => 'index',
+            'action' => 'index'
+        ]);
     }
 }
