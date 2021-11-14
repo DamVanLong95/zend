@@ -24,7 +24,7 @@ class User
    public $updated_at;
    public $deleted_at;
 
-   // public $inputFilter;
+   public $inputFilter;
 
 
 
@@ -48,24 +48,24 @@ class User
       $this->deleted_at = $data['deleted_at'] ?? null;
    }
 
-   
-    // Add the following method:
-    public function getArrayCopy()
-    {
-        return [
-            'id'     => $this->id,
-            'fullname' => $this->fullname,
-            'password'  => $this->password,
-            'email'  => $this->email,
-            'avatar'  => $this->avatar,
-            'gender'  => $this->gender,
-            'birthday'  => $this->birthday,
-            'skill'  => $this->skill,
-            'password'  => $this->password,
-            'phone'  => $this->phone,
-            'username'  => $this->username,
-        ];
-    }
+
+   // Add the following method:
+   public function getArrayCopy()
+   {
+      return [
+         'id'     => $this->id,
+         'fullname' => $this->fullname,
+         'password'  => $this->password,
+         'email'  => $this->email,
+         'avatar'  => $this->avatar,
+         'gender'  => $this->gender,
+         'birthday'  => $this->birthday,
+         'skill'  => $this->skill,
+         'password'  => $this->password,
+         'phone'  => $this->phone,
+         'username'  => $this->username,
+      ];
+   }
 
    public function getId()
    {
@@ -131,93 +131,132 @@ class User
    {
       return $this->updated_at;
    }
-   
-   // public function getInputFilter()
-   // {
-   //    if (!$this->inputFilter) {
-   //       $inputFilter = new InputFilter();
-   //       $inputFilter->add([
-   //          'name' => 'username',
-   //          'required' => true,
-   //          'filter' => [
-   //             ['name' => 'StringTrim']
-   //          ],
-   //          'validators' => [
-   //             [
-   //                'name' => 'NotEmpty',
-   //             ],
-   //          ],
-   //       ]);
 
-   //       $inputFilter->add([
-   //          'name' => 'email',
-   //          'required' => true,
-   //          'filter' => [
-   //             ['name' => 'StringToLower'],
-   //             ['name' => 'StringTrim']
-   //          ],
-   //          'validators' => [
-   //             [
-   //                'name' => 'EmailAddress',
-   //                'options' => [
-   //                   'messages' => [
-   //                      \Zend\Validator\EmailAddress::INVALID_FORMAT => 'email invalid format'
-   //                   ]
-   //                ]
-   //             ],
-   //          ],
-   //       ]);
+   public function getInputFilter()
+   {
+      if (!$this->inputFilter) {
+         $inputFilter = new InputFilter();
+         $inputFilter->add([
+            'name' => 'username',
+            'required' => true,
+            'filter' => [
+               ['name' => 'StringTrim']
+            ],
+            'validators' => [
+               [
+                  'name' => 'NotEmpty',
+               ],
+            ],
+         ]);
 
-   //       $inputFilter->add(
-   //          [
-   //             'name' => 'fullname',
-   //             'filters' => [
-   //                [
-   //                   'name' => 'StringToUpper'
-   //                ],
-   //                [
-   //                   'name' => 'StringTrim'
-   //                ]
-   //             ],
-   //             'validators' => [
-   //                [
-   //                   'name' => 'StringLength',
-   //                   'options' => [
-   //                      'encoding' => 'UTF-8',
-   //                      'max' => 30,
-   //                      'min' => 5
-   //                   ]
-   //                ],
-   //             ],
+         $inputFilter->add([
+            'name' => 'email',
+            'required' => true,
+            'filter' => [
+               ['name' => 'StringToLower'],
+               ['name' => 'StringTrim']
+            ],
+            'validators' => [
+               [
+                  'name' => 'EmailAddress',
+                  // 'options' => [
+                  //    'messages' => [
+                  //       \Zend\Validator\EmailAddress::INVALID_FORMAT => 'email invalid format'
+                  //    ]
+                  // ]
+               ],
+            ],
+         ]);
 
-   //          ]
-   //       );
+         $inputFilter->add(
+            [
+               'name' => 'fullname',
+               'filters' => [
+                  [
+                     'name' => 'StringToUpper'
+                  ],
+                  [
+                     'name' => 'StringTrim'
+                  ]
+               ],
+               'validators' => [
+                  [
+                     'name' => 'StringLength',
+                     'options' => [
+                        'encoding' => 'UTF-8',
+                        'max' => 30,
+                        'min' => 5
+                     ]
+                  ],
+               ],
 
-   //       $inputFilter->add(
-   //          array('name' => 'phone', 'required' => true)
-   //       );
+            ]
+         );
+
+         $inputFilter->add(
+            [
+               'name' => 'password',
+               'filters' => [
+                  ['name' => 'StringToLower'],
+                  ['name' => 'StringTrim'],
+               ],
+               'validators' => [
+                  [
+                     'name' => 'StringLength',
+                     'options' => [
+                        'max' => 30,
+                        'min' => 5
+                     ]
+                  ],
+                  [
+                     'name' => 'Regex',
+                     'options' => [
+                        'pattern' => '[a-zA-Z0-9_-]'
+                     ]
+
+                  ],
+                  [
+                     'name' => 'Regex',
+                     'options' => [
+                        'pattern' => '[!@#$%^&]'
+                     ]
+                  ],
+               ],
+
+            ]
+         );
+
+         $inputFilter->add([
+            'name' => 'phone',
+            'required' => true,
+            'validators' => [
+               [
+                  'name' => 'Digits',
+               ],
+            ],
+         ]);
 
 
-   //       // $inputFilter->add([
-   //       //    'name' => 'avatar',
-   //       //    'validators' => [
-   //       //       [
-   //       //          'name' => \Zend\Validator\File\Extension::class,
-   //       //          'options' => [
-   //       //             //Loại file được upload
-   //       //             'extension' => ['jpg', 'png', 'gif', 'jpeg'],
-   //       //             'case' => false //không phân biệt HOA/thường
-   //       //          ]
-   //       //       ],
-   //       //       [
-   //       //          //Phải là file ảnh
-   //       //          'name' => \Zend\Validator\File\IsImage::class,
-   //       //       ],
-   //       //    ],
-   //       // ]);
+         $inputFilter->add([
+            'name' => 'avatar',
+            'validators' => [
+               [
+                  'name' => \Zend\Validator\File\Extension::class,
+                  'options' => [
+                     //Loại file được upload
+                     'extension' => ['jpg', 'png', 'gif', 'jpeg'],
+                     'case' => false //không phân biệt HOA/thường
+                  ]
+               ],
+               [
+                  //Phải là file ảnh
+                  'name' => \Zend\Validator\File\IsImage::class,
+               ],
+            ],
+         ]);
 
-   //       $this->inputFilter = $inputFilter;
-   //    }
-   //    return $this->inputFilter;
-   // }
+         $this->inputFilter = $inputFilter;
+      }
+      return $this->inputFilter;
+   }
 }

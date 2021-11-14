@@ -3,6 +3,8 @@
 namespace Application\Form;
 
 use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
+use Zend\I18n\Validator\PhoneNumber;
 
 class RegisterForm extends Form
 {
@@ -15,6 +17,8 @@ class RegisterForm extends Form
         $this->setAttribute('enctype', 'multipart/form-data');
 
         $this->addElements();
+
+        $this->getInputFilter();
     }
 
     public function setAction($url)
@@ -126,7 +130,8 @@ class RegisterForm extends Form
 
         // Add "gender" field
         $this->add([
-            'type'  =>\Zend\Form\Element\Radio::class,
+            'type'  => 'radio',
+            'name' => 'gender',
             'attributes' => [
                 'id' => 'gender',
                 'style' => 'margin-right:12px'

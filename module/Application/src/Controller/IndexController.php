@@ -9,7 +9,6 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 use Application\Form\RegisterForm;
 use Application\Model\User;
 use Zend\Filter\File\Rename;
@@ -26,15 +25,15 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         $users  = $this->table->fetchAll();
-       
+
         return ['users' => $users];
     }
 
     public function addAction()
     {
         $form = new RegisterForm();
-
         $request = $this->getRequest();
+
         if (!$request->isPost()) {
             return ['form' => $form];
         }
@@ -61,7 +60,6 @@ class IndexController extends AbstractActionController
         $filter = new Rename(array(
             "target"    => IMAGE_PATH . $newFileName,
             "overwrite " => true,
-            "randomize" => true,
         ));
 
         $filter->filter($file['avatar']);
@@ -75,7 +73,6 @@ class IndexController extends AbstractActionController
 
         $this->table->saveUser($user);
 
-        //Thông báo - chuyển hướng sang trang khác
         return $this->redirect()->toRoute('application', [
             'controller' => 'index',
             'action' => 'index'
