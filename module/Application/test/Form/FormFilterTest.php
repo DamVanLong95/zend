@@ -5,9 +5,15 @@ namespace FormTest\Form;
 use PHPUnit\Framework\TestCase;
 use Application\Form\RegisterForm;
 use Application\Model\User;
+use org\bovigo\vfs\content\LargeFileContent;
+use org\bovigo\vfs\vfsStream;
 
 class FormFilterTest extends TestCase
 {
+    public function setUp(): void
+    {
+        $root = vfsStream::setup();
+    }
 
     /**
      * @dataProvider getFullNameData
@@ -30,9 +36,6 @@ class FormFilterTest extends TestCase
             ['longdv', true, []],
             ['1234', false, ['stringLengthTooShort' => "The input is less than 5 characters long"]],
             ['12345', true, []],
-            ['^9bhy&', false, [
-                'notAlnum' => 'The input contains characters which are non alphabetic and no digits',
-            ]],
             ['123456789012345678901234567890123456789012345678900', false, [
                 'stringLengthTooLong' => 'The input is more than 15 characters long'
             ]],
@@ -92,7 +95,6 @@ class FormFilterTest extends TestCase
         $filter = $user->getInputFilter();
         $filter->setData(['password' => $password]);
         $validator = $filter->get('password');
-        // var_dump($validator->getMessages());;
 
         $this->assertEquals($expected, $validator->isValid());
         $this->assertEquals($messgesError, $validator->getMessages());
@@ -101,11 +103,26 @@ class FormFilterTest extends TestCase
     public function getPasswordData(): array
     {
         return [
-            ['1234', false, ['stringLengthTooShort' => 'The input is less than 5 characters long',]],
-            ['12345', true, []],
-            ['12345abc', true, []],
-            ['12345acdARF', true, []],
+            ['1234', false, [
+                'stringLengthTooShort' => 'The input is less than 5 characters long',
+                'regexNotMatch' => "The input does not match against pattern '/[!@#$%^&]/'"
+            ]],
+            ['12345', false, ['regexNotMatch' => "The input does not match against pattern '/[!@#$%^&]/'"]],
             ['12345acdgA!@', true, []],
         ];
+    }
+
+    /**
+     *  @dataProvider getPasswordData
+     */
+    public function testImageValidator($img, bool $expected, $messgesError): void
+    {
+        $user = new User();
+        $filter = $user->getInputFilter();
+        $filter->setData(['password' => $img]);
+        $validator = $filter->get('password');
+
+        $this->assertEquals($expected, $validator->isValid());
+        $this->assertEquals($messgesError, $validator->getMessages());
     }
 }

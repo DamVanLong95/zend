@@ -189,14 +189,10 @@ class User
                      'min' => 5
                   ]
                ],
-               [
-                  'name' => 'Alnum',
-               ],
             ],
 
          ]
       );
-
       $inputFilter->add(
          [
             'name' => 'password',
@@ -215,12 +211,15 @@ class User
                [
                   "name" => "Regex",
                   "options" => [
-                     "pattern" => "/^[a-zA-Z0-9_]+$/"
+                     "pattern" => "/[a-zA-Z0-9_]/"
                   ],
                ],
                [
-                  'name' => 'PasswordStrength'
-               ]
+                  "name" => "Regex",
+                  "options" => [
+                     "pattern" => "/[!@#$%^&]/"
+                  ],
+               ],
             ],
 
          ]
@@ -241,6 +240,10 @@ class User
          'name' => 'avatar',
          'validators' => [
             [
+               //Phải là file ảnh
+               'name' => \Zend\Validator\File\IsImage::class,
+            ],
+            [
                'name' => \Zend\Validator\File\Extension::class,
                'options' => [
                   //Loại file được upload
@@ -248,10 +251,7 @@ class User
                   'case' => false //không phân biệt HOA/thường
                ]
             ],
-            [
-               //Phải là file ảnh
-               'name' => \Zend\Validator\File\IsImage::class,
-            ],
+
          ],
       ]);
 

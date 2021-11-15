@@ -9,25 +9,30 @@ $this->headTitle($title);
 </p>
 
 <table class="table">
-    <tr>
-        <th>Username</th>
-        <th>Avatar</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Action&nbsp;</th>
-    </tr>
-    <?php foreach ($users as $user) : ?>
+    <thead>
         <tr>
-            <td><?= $this->escapeHtml($user->username) ?></td>
-            <td>
-                <img src="../../img/<?php echo $user->avatar; ?>" class="img-thumbnail" alt="" width="100" height="100">
-            </td>
-            <td><?= $this->escapeHtml($user->email) ?></td>
-            <td><?= $this->escapeHtml($user->phone) ?></td>
-            <td>
-                <a href=" <?= $this->url('application', ['action' => 'edit', 'id' => $user->id]) ?>">Edit</a>
-                <a href="<?= $this->url('application', ['action' => 'delete', 'id' => $user->id]) ?>">Delete</a>
-            </td>
+            <th>Username</th>
+            <th>Avatar</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Action&nbsp;</th>
         </tr>
-    <?php endforeach; ?>
+    </thead>
+    <tbody>
+        <?php foreach ($users as $user) : ?>
+            <tr>
+                <td><?= $this->escapeHtml($user->username) ?></td>
+                <td>
+                    <img src="../../img/<?php echo $user->avatar; ?>" class="img-thumbnail" alt="" width="100" height="100">
+                </td>
+                <td><?= $this->escapeHtml($user->email) ?></td>
+                <td><?= $this->escapeHtml($user->phone) ?></td>
+                <td>
+                    <a href=" <?= $this->url('application', ['action' => 'edit', 'id' => $user->id]) ?>">Edit</a>
+                    <a href="<?= $this->url('application', ['action' => 'delete', 'id' => $user->id]) ?>">Delete</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
 </table>
+<?= $this->headScript()->appendFile('/js/datatable.js'); ?>

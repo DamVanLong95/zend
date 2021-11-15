@@ -117,7 +117,6 @@ class IndexController extends AbstractActionController
 
     public function deleteAction()
     {
-
         $id = (int) $this->params()->fromRoute('id', 0);
         if (!$id) {
             return $this->redirect()->toRoute('application');

@@ -67,13 +67,6 @@ return [
             __DIR__ . '/../view',
         ],
     ],
-    'validators' => array(
-        'factories' => array(
-            PasswordStrength::class => InvokableFactory::class 
-        ),
-        'aliases' => array(
-            'PasswordStrength' => PasswordStrength::class
-        )
-    ),
+ 
 
 ];
