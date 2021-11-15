@@ -10,6 +10,8 @@ namespace Application;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
+use Zend\Validator\PasswordStrength;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
     'router' => [
@@ -65,4 +67,13 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'validators' => array(
+        'factories' => array(
+            PasswordStrength::class => InvokableFactory::class 
+        ),
+        'aliases' => array(
+            'PasswordStrength' => PasswordStrength::class
+        )
+    ),
+
 ];

@@ -32,8 +32,8 @@ class IndexController extends AbstractActionController
     public function addAction()
     {
         $form = new RegisterForm();
-        $request = $this->getRequest();
 
+        $request = $this->getRequest();
         if (!$request->isPost()) {
             return ['form' => $form];
         }
@@ -41,7 +41,6 @@ class IndexController extends AbstractActionController
         //Xử lý khi POST
         $user = new User();
         $form->setInputFilter($user->getInputFilter());
-
         $data =  $request->getPost()->toArray();
         $file =  $request->getFiles()->toArray();
         $post = array_merge_recursive($data, $file);
@@ -60,6 +59,7 @@ class IndexController extends AbstractActionController
         $filter = new Rename(array(
             "target"    => IMAGE_PATH . $newFileName,
             "overwrite " => true,
+            "randomize" => true,
         ));
 
         $filter->filter($file['avatar']);
@@ -73,6 +73,7 @@ class IndexController extends AbstractActionController
 
         $this->table->saveUser($user);
 
+        //Thông báo - chuyển hướng sang trang khác
         return $this->redirect()->toRoute('application', [
             'controller' => 'index',
             'action' => 'index'
@@ -103,7 +104,7 @@ class IndexController extends AbstractActionController
 
         $form->setInputFilter($user->getInputFilter());
         $form->setData($request->getPost());
-
+      
         if (!$form->isValid()) {
             return $viewData;
         }
