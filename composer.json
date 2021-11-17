@@ -12,9 +12,9 @@
     "require": {
         "php": "^5.6 || ^7.0",
         "zendframework/zend-component-installer": "^1.0 || ^2.1",
-        "zendframework/zend-mvc": "^3.1.1",
+        "zendframework/zend-mvc": "^3.0.1",
         "zfcampus/zf-development-mode": "^3.2",
-        "zendframework/zend-test": "^3.3",
+        "zendframework/zend-test": "^3.0",
         "zendframework/zend-form": "^2.14",
         "zendframework/zend-mvc-i18n": "^1.1.1",
         "zendframework/zend-db": "^2.10.0",
@@ -25,7 +25,7 @@
         "zendframework/zend-servicemanager-di": "^1.2.1",
         "zendframework/zend-crypt": "^3.3",
         "zendframework/zend-validator": "^2.13",
-        "mikey179/vfsStream": "*"
+        "mikey179/vfsStream": "^1.6"
     },
     "autoload": {
         "psr-4": {

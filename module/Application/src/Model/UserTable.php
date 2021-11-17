@@ -3,11 +3,12 @@
 namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGatewayInterface;
+use RuntimeException;
 
 class UserTable
 {
 
-    protected $tableGateway;
+    public $tableGateway;
 
     public function __construct(TableGatewayInterface $tableGateway)
     {
@@ -30,7 +31,7 @@ class UserTable
         if (!$row) {
             throw new \Exception("Could not find row $id");
         }
-
+        $row = $rowset->current();
         return $row;
     }
 
@@ -51,17 +52,29 @@ class UserTable
             'created_at' => $user->getCreatedAt(),
             'updated_at' => $user->getUpdatedAt(),
         ];
+        $dateTime = new \DateTime();
 
-        if ($user->getId()) {
-            $dateTime = new \DateTime();
-            $data['updated_at'] = $dateTime->format('Y-m-d H:i:s');
+        $id = (int) $user->id;
 
-            return $this->tableGateway->update($data, [
-                'id' => $user->getId()
-            ]);
-        } else {
+        if ($id === 0) {
+            $data['created_at'] = $dateTime->format('Y-m-d H:i:s');
             return $this->tableGateway->insert($data);
         }
+
+        try {
+            $this->getUserById($id);
+        } catch (RuntimeException $e) {
+            throw new RuntimeException(sprintf(
+                'Cannot update user with identifier %d; does not exist',
+                $id
+            ));
+        }
+
+        $data['updated_at'] = $dateTime->format('Y-m-d H:i:s');
+
+        return $this->tableGateway->update($data, [
+            'id' => $id
+        ]);
     }
 
     public function deleteUser($id)

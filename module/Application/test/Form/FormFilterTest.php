@@ -10,10 +10,7 @@ use org\bovigo\vfs\vfsStream;
 
 class FormFilterTest extends TestCase
 {
-    public function setUp(): void
-    {
-        $root = vfsStream::setup();
-    }
+    private $root;
 
     /**
      * @dataProvider getFullNameData
@@ -113,16 +110,81 @@ class FormFilterTest extends TestCase
     }
 
     /**
-     *  @dataProvider getPasswordData
+     *  @dataProvider getPhoneData
      */
-    public function testImageValidator($img, bool $expected, $messgesError): void
+    public function testPhoneNumberValidator($phone, bool $expected, $messgesError)
     {
         $user = new User();
         $filter = $user->getInputFilter();
-        $filter->setData(['password' => $img]);
-        $validator = $filter->get('password');
+        $filter->setData(['phone' => $phone]);
+        $validator = $filter->get('phone');
 
         $this->assertEquals($expected, $validator->isValid());
         $this->assertEquals($messgesError, $validator->getMessages());
+    }
+
+    public function getPhoneData()
+    {
+        return [
+            ['0393184264', true, []],
+            ['0393', false, ['regexNotMatch' => "The input does not match against pattern '/^0[1-68]([-. ]?[0-9]{2}){4}$/'"]],
+            ['039318426442343', false, ['regexNotMatch' => "The input does not match against pattern '/^0[1-68]([-. ]?[0-9]{2}){4}$/'"]],
+            ['dsfsd324', false, [
+                'notDigits' => 'The input must contain only digits',
+                'regexNotMatch' => "The input does not match against pattern '/^0[1-68]([-. ]?[0-9]{2}){4}$/'",
+            ]]
+        ];
+    }
+
+    /**
+     *  @dataProvider getBirthDayData
+     */
+    public function testBirthDayValidator($birthday, bool $expected, $messgesError)
+    {
+        $user = new User();
+        $filter = $user->getInputFilter();
+        $filter->setData(['birthday' => $birthday]);
+        $validator = $filter->get('birthday');
+
+        $this->assertEquals($expected, $validator->isValid());
+        $this->assertEquals($messgesError, $validator->getMessages());
+    }
+
+    public function getBirthDayData()
+    {
+        return [
+            ['10', false, ['dateInvalidDate' => 'The input does not appear to be a valid date']],
+            ['10/10/2021', false, ['dateInvalidDate' => 'The input does not appear to be a valid date']],
+            ['date', false, ['dateInvalidDate' => 'The input does not appear to be a valid date']],
+            ['2021 November', false, ['dateInvalidDate' => 'The input does not appear to be a valid date']],
+            ['2021-10-10', true, []],
+        ];
+    }
+
+    /**
+     *  @dataProvider getGenderData
+     */
+    public function testGenderValidator($gender, bool $expected, $messgesError)
+    {
+        $user = new User();
+        $filter = $user->getInputFilter();
+        $filter->setData(['gender' => $gender]);
+        $validator = $filter->get('gender');
+
+        $this->assertEquals($expected, $validator->isValid());
+        $this->assertEquals($messgesError, $validator->getMessages());
+    }
+
+    public function getGenderData()
+    {
+        return [
+            ['1', true, []],
+            ['0', true, []],
+            ['5', false, ['notBetween' => "The input is not between '0' and '1', inclusively"]],
+            ['fsdfs', false, [
+                'notDigits' => 'The input must contain only digits',
+                'valueNotNumeric' => "The min ('0') and max ('1') values are numeric, but the input is not"
+            ]]
+        ];
     }
 }
