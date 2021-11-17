@@ -11,8 +11,6 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Application\Form\RegisterForm;
 use Application\Model\User;
-use Zend\Filter\File\Rename;
-
 class IndexController extends AbstractActionController
 {
     protected $table;
@@ -52,22 +50,6 @@ class IndexController extends AbstractActionController
         }
 
         $data = $form->getData();
-
-        $newFileName = date('Y-m-d-h-i-s') . '-' . $file['avatar']['name'];
-
-        // Rename file upload.
-        $filter = new Rename(array(
-            "target"    => IMAGE_PATH . $newFileName,
-            "overwrite " => true,
-            "randomize" => true,
-        ));
-
-        $filter->filter($file['avatar']);
-
-        $data['avatar'] = $newFileName;
-        $dateTime = new \DateTime();
-        $data['created_at'] = $dateTime->format('Y-m-d H:i:s');
-
         $user = new User;
         $user->exchangeArray($data);
 
@@ -83,7 +65,6 @@ class IndexController extends AbstractActionController
     public function editAction()
     {
         $id = (int) $this->params()->fromRoute('id', 0);
-
         if (0 === $id) {
             return $this->redirect()->toRoute('application', ['action' => 'add']);
         }
@@ -92,23 +73,26 @@ class IndexController extends AbstractActionController
 
         $form = new RegisterForm();
         $form->bind($user);
-
         $form->get('submit')->setAttribute('value', 'Edit');
 
+        // Xu ly method GET.
         $request = $this->getRequest();
         $viewData = ['id' => $id, 'form' => $form];
-
         if (!$request->isPost()) {
             return $viewData;
         }
 
+        // Xu ly method POST.
         $form->setInputFilter($user->getInputFilter());
-        $form->setData($request->getPost());
-      
+        $data =  $request->getPost()->toArray();
+        $file =  $request->getFiles()->toArray();
+        $post = array_merge_recursive($data, $file);
+        $form->setData($post);
+       
         if (!$form->isValid()) {
             return $viewData;
         }
-
+      
         $this->table->saveUser($user);
 
         // Redirect to album list

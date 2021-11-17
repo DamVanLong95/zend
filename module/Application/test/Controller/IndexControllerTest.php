@@ -9,12 +9,16 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\IndexController;
+use Application\Form\RegisterForm;
 use Application\Model\User;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\UserTable;
 use Zend\ServiceManager\ServiceManager;
 use Prophecy\Argument;
+use Zend\Db\TableGateway\TableGatewayInterface;
+use org\bovigo\vfs\content\LargeFileContent;
+use org\bovigo\vfs\vfsStream;
 
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
@@ -33,6 +37,7 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
 
         parent::setUp();
         $this->configureServiceManager($this->getApplicationServiceLocator());
+        $this->tableGateway = $this->prophesize(Argument::type(TableGatewayInterface::class));
     }
 
     /**
@@ -88,20 +93,47 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
             ->shouldBeCalled();
 
         $postData = [
-            'username'  => 'Led Zeppelin III',
-            'fullname' => 'Led Zeppelin',
+            'fullname'  => 'Nguyen van A',
+            'username' => 'NguyenA123',
             'email'     => 'longdv@gmail.com',
-            'password' => '123',
-            'phone' => '21421423',
-            'gender' => '1',
-            'description' => 'sdfds',
-            'avatar' => 'sdfds',
-            'birthday' => '2021/1/1',
-            'skill'=> 1
+            'password' => '12454!',
+            'phone' => '0393184274',
+            'gender' => 1,
+            'description' => "fds",
+            'avatar' => "fsdf",
+            'birthday' => '2011-01-11',
+            'skill' => 1,
         ];
         $this->dispatch('/application/add', 'POST', $postData);
         $this->assertResponseStatusCode(302);
         $this->assertRedirectTo('/application/index');
 
+    }
+
+    public function testSaveUserWillInsertNewUsersIfTheyDontAlreadyHaveAnId()
+    {
+        $inputData = [
+            "username"  => "damvanlong95",
+            "email"     => "longdamdgmail.com",
+            "fullname" => "dam van Long",
+            "password" => "123",
+            "gender" => 1,
+            "skill" => 6, //C++
+            "phone" => '0393184265',
+            "description" => 'description',
+            "birthday" => '2021-12-01',
+            "avatar" => null,
+        ];
+
+        $user = new User();
+        $user->exchangeArray($inputData);
+        $inputData['password'] = $user->getPassword();
+
+        $resultSet = $this->prophesize(ResultSetInterface::class);
+        $resultSet->current()->willReturn($user);
+        var_dump( $this->userTable->saveUser($user));die;
+
+        $this->assertSame($resultSet,  $this->userTable->saveUser($user));
+       ;
     }
 }

@@ -4,6 +4,10 @@ namespace Application\Model;
 
 use Zend\Crypt\Password\Bcrypt;
 use Zend\InputFilter\InputFilter;
+use Zend\Filter\File\Rename;
+use Zend\Filter\File\RenameUpload;
+use Zend\Validator\File\UploadFile;
+use Zend\InputFilter\FileInput;
 
 class User
 {
@@ -21,7 +25,6 @@ class User
    public $created_at;
    public $updated_at;
    public $deleted_at;
-
    public $inputFilter;
 
 
@@ -30,7 +33,7 @@ class User
    {
       $bcrypt = new Bcrypt();
       $password = isset($data['password']) ? $bcrypt->create($data['password']) : null;
-      $this->id = $data['id'];
+      $this->id     = !empty($data['id']) ? $data['id'] : null;
       $this->email = $data['email'] ?? null;
       $this->username = $data['username'] ?? null;
       $this->fullname = $data['fullname'] ?? null;
@@ -40,10 +43,31 @@ class User
       $this->phone = $data['phone'];
       $this->description = $data['description'];
       $this->password = $password;
-      $this->birthday = $data['birthday'];
+      $this->birthday = $data['birthday'] ?? null;
       $this->created_at = $data['created_at'] ?? null;
       $this->updated_at = $data['updated_at'] ?? null;
       $this->deleted_at = $data['deleted_at'] ?? null;
+     
+      if (!empty($data['avatar'])) {
+         if (is_array($data['avatar'])) {
+
+            $newFileName = date('Y-m-d-h-i-s') . '-' . $data['avatar']['name'];
+
+            // Rename file upload.
+            $filter = new Rename(array(
+               "target"    => IMAGE_PATH . $newFileName,
+               "overwrite " => true,
+            ));
+
+            $filter->filter($data['avatar']);
+
+            $this->avatar = $newFileName;
+         } else {
+            $this->avatar = $data['avatar'];
+         }
+      } else {
+         $data['avatar'] = null;
+      }
    }
 
 
@@ -232,12 +256,46 @@ class User
             [
                'name' => 'Digits',
             ],
+            [
+               'name' => 'Regex',
+               "options" => [
+                  'pattern'  => '/^0[1-68]([-. ]?[0-9]{2}){4}$/'
+               ],
+            ]
          ],
       ]);
 
+      $inputFilter->add([
+         'name' => 'birthday',
+         'required' => true,
+         'validators' => [
+            [
+               'name' => 'Date',
+            ]
+         ],
+      ]);
 
       $inputFilter->add([
+         'name' => 'gender',
+         'required' => true,
+         'validators' => [
+            [
+               'name' => 'Digits',
+
+            ],
+            [
+               'name' => 'Between',
+               'options' => [
+                  'min' => 0,
+                  'max' => 1,
+               ],
+            ]
+         ],
+      ]);
+      $inputFilter->add([
          'name' => 'avatar',
+         'allow_empty' => true,
+         'required' => true,
          'validators' => [
             [
                //Phải là file ảnh

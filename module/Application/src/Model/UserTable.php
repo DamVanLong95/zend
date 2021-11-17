@@ -51,15 +51,14 @@ class UserTable
             'created_at' => $user->getCreatedAt(),
             'updated_at' => $user->getUpdatedAt(),
         ];
-
+        $dateTime = new \DateTime();
         if ($user->getId()) {
-            $dateTime = new \DateTime();
             $data['updated_at'] = $dateTime->format('Y-m-d H:i:s');
-
             return $this->tableGateway->update($data, [
                 'id' => $user->getId()
             ]);
         } else {
+            $data['created_at'] = $dateTime->format('Y-m-d H:i:s');
             return $this->tableGateway->insert($data);
         }
     }

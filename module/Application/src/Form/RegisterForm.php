@@ -3,8 +3,6 @@
 namespace Application\Form;
 
 use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\I18n\Validator\PhoneNumber;
 
 class RegisterForm extends Form
 {
@@ -17,8 +15,6 @@ class RegisterForm extends Form
         $this->setAttribute('enctype', 'multipart/form-data');
 
         $this->addElements();
-
-        $this->getInputFilter();
     }
 
     public function setAction($url)
@@ -103,12 +99,13 @@ class RegisterForm extends Form
 
         // Add "phone" field
         $this->add([
-            'type'  => 'text',
+            'type'  => 'tel',
             'name' => 'phone',
             'attributes' => [
                 'id' => 'phone',
                 'class' => 'form-control',
-                'placeholder' => 'Phone'
+                'placeholder' => 'Phone',
+                'pattern'  => '^0[1-68]([-. ]?[0-9]{2}){4}$'
             ],
             'options' => [
                 'label' => 'Phone number',
