@@ -37,11 +37,11 @@ class User
       $this->email = $data['email'] ?? null;
       $this->username = $data['username'] ?? null;
       $this->fullname = $data['fullname'] ?? null;
-      $this->gender = $data['gender'];
-      $this->skill = $data['skill'];
-      $this->avatar = $data['avatar'];
-      $this->phone = $data['phone'];
-      $this->description = $data['description'];
+      $this->gender = $data['gender'] ?? null;
+      $this->skill = $data['skill'] ?? null;
+      $this->avatar = $data['avatar'] ?? null;
+      $this->phone = $data['phone'] ?? null;
+      $this->description = $data['description'] ?? null;
       $this->password = $password;
       $this->birthday = $data['birthday'] ?? null;
       $this->created_at = $data['created_at'] ?? null;

@@ -17,8 +17,6 @@ use Application\Model\UserTable;
 use Zend\ServiceManager\ServiceManager;
 use Prophecy\Argument;
 use Zend\Db\TableGateway\TableGatewayInterface;
-use org\bovigo\vfs\content\LargeFileContent;
-use org\bovigo\vfs\vfsStream;
 
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
@@ -107,33 +105,37 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/application/add', 'POST', $postData);
         $this->assertResponseStatusCode(302);
         $this->assertRedirectTo('/application/index');
-
     }
 
-    public function testSaveUserWillInsertNewUsersIfTheyDontAlreadyHaveAnId()
+     /**
+     * Test action with post
+     */
+    public function testEditActionRedirectsAfterValidPost()
     {
-        $inputData = [
-            "username"  => "damvanlong95",
-            "email"     => "longdamdgmail.com",
-            "fullname" => "dam van Long",
-            "password" => "123",
-            "gender" => 1,
-            "skill" => 6, //C++
-            "phone" => '0393184265',
-            "description" => 'description',
-            "birthday" => '2021-12-01',
-            "avatar" => null,
+        // check param instane
+        $this->userTable
+            ->saveUser(Argument::type(User::class))
+            ->shouldBeCalled();
+
+        $postData = [
+            'id' => 1,
+            'fullname'  => 'Nguyen van A',
+            'username' => 'NguyenA123',
+            'email'     => 'longdv@gmail.com',
+            'password' => '12454!',
+            'phone' => '0393184274',
+            'gender' => 1,
+            'description' => "fds",
+            'avatar' => "fsdf",
+            'birthday' => '2011-01-11',
+            'skill' => 1,
         ];
+        $this->userTable->getUserById($postData['id'])->willReturn(1);
 
-        $user = new User();
-        $user->exchangeArray($inputData);
-        $inputData['password'] = $user->getPassword();
-
-        $resultSet = $this->prophesize(ResultSetInterface::class);
-        $resultSet->current()->willReturn($user);
-        var_dump( $this->userTable->saveUser($user));die;
-
-        $this->assertSame($resultSet,  $this->userTable->saveUser($user));
-       ;
+        $this->dispatch('/application/edit/1', 'POST', $postData);
+        $this->assertResponseStatusCode(302);
+        $this->assertRedirectTo('/application/index');
     }
+
+    
 }

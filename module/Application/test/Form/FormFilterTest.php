@@ -187,4 +187,29 @@ class FormFilterTest extends TestCase
             ]]
         ];
     }
+
+    public function testFileValidator()
+    {
+        $testFile = __DIR__ . '/_files/picture.jpg';
+        $user = new User();
+        $filter = $user->getInputFilter();
+        $filter->setData(['avatar' => $testFile]);
+        $validator = $filter->get('avatar');
+        $this->assertTrue($validator->isValid());
+    }
+
+    public function testFileValidatorFail()
+    {
+        $testFile = __DIR__ . '/_files/testsize.mo';
+        $user = new User();
+        $filter = $user->getInputFilter();
+        $filter->setData(['avatar' => $testFile]);
+        $validator = $filter->get('avatar');
+        $this->assertFalse($validator->isValid());
+        $messgesError = [
+            'fileIsImageFalseType' => "File is no image, 'application/x-empty' detected",
+            'fileExtensionFalse' => "File has an incorrect extension",
+        ];
+        $this->assertEquals($messgesError, $validator->getMessages());
+    }
 }

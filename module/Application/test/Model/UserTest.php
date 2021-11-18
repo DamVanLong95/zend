@@ -15,9 +15,15 @@ class UserTest extends TestCase
 
         $data  = [
             'username' => 'some artist',
-            'password'     => 123,
             'fullname'  => 'some title',
-            'email'  => 'longdv@gmail.com'
+            'email'  => 'longdv@gmail.com',
+            'phone' => '0393184258',
+            'gender' => 1,
+            'birthday' => 'longdv@gmail.com',
+            'avatar' => null,
+            'password' => '1234!',
+            'skill' => 6,
+            'description' => 'description',
         ];
 
         $user->exchangeArray($data);
@@ -52,6 +58,11 @@ class UserTest extends TestCase
         $this->assertNull($user->username, '"username" should default to null');
         $this->assertNull($user->password, '"password" should default to null');
         $this->assertNull($user->email, '"email" should default to null');
+        $this->assertNull($user->avatar, '"avatar" should default to null');
+        $this->assertNull($user->skill, '"skill" should default to null');
+        $this->assertNull($user->birthday, '"birthday" should default to null');
+        $this->assertNull($user->gender, '"gender" should default to null');
+        $this->assertNull($user->phone, '"phone" should default to null');
     }
    
 }
